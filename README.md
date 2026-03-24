@@ -31,7 +31,7 @@ Clean, production-minded backend code built around things I actually know:
 
 | Project | Description |
 |---|---|
-| [weather-api](./spring-boot/weather-api) | Spring Boot service consuming OpenWeatherMap — REST client, DTO mapping, error handling *(in progress)* |
+| [weather-api](./spring-boot/weather-api) | Spring Boot service consuming OpenWeatherMap — REST client, DTO mapping, error handling |
 
 *More coming — microservices demo, REST API template...*
 
