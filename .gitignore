@@ -20,8 +20,8 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
+**/.mvn/timing.properties
+**/.mvn/wrapper/maven-wrapper.jar
 
 # ==============================================================================
 # Java
@@ -46,9 +46,9 @@ replay_pid*
 # ==============================================================================
 # IntelliJ IDEA
 # ==============================================================================
-.idea/*
-!.idea/codeStyles
-!.idea/runConfigurations
+**/.idea/*
+!**/.idea/codeStyles
+!**/.idea/runConfigurations
 *.iws
 *.iml
 *.ipr
@@ -64,12 +64,12 @@ out/
 # ==============================================================================
 # VS Code
 # ==============================================================================
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
+**/.vscode/*
+!**/.vscode/settings.json
+!**/.vscode/tasks.json
+!**/.vscode/launch.json
+!**/.vscode/extensions.json
+!**/.vscode/*.code-snippets
 .history
 .ionide
 

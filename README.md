@@ -33,15 +33,21 @@ Clean, production-minded backend code built around things I actually know:
 |---|---|
 | [weather-api](./spring-boot/weather-api) | Spring Boot service consuming OpenWeatherMap — REST client, DTO mapping, error handling |
 
-*More coming — microservices demo, REST API template...*
+### Quarkus
+
+| Project | Description |
+|---|---|
+| [q-weather](./quarkus/q-weather) | Quarkus equivalent of weather-api — same domain, different stack. MicroProfile REST Client, Caffeine cache, human-readable endpoint |
+
+### Starters & Libraries
+
+| Project | Description |
+|---|---|
+| [transaction-token-starter](./starters/transaction-token-starter) | Spring Boot Starter for automatic MDC-based transaction log correlation — drop-in, zero boilerplate |
 
 ### Kafka
 
 *Producer/consumer samples — coming soon*
-
-### Quarkus
-
-*Coming soon*
 
 ### gRPC
 
@@ -53,15 +59,15 @@ Clean, production-minded backend code built around things I actually know:
 
 **Production-proven**
 
-| Layer | Tech |
-|---|---|
-| Language | Java 8 → 21 |
-| Framework | Spring Boot 2 / 3 |
-| Build | Maven |
-| Data | PostgreSQL, Oracle, Elasticsearch |
-| Messaging | Kafka |
+| Layer | Tech                                            |
+|---|-------------------------------------------------|
+| Language | Java 8 → 21                                     |
+| Framework | Spring Boot 2 / 3, Quarkus 3                    |
+| Build | Maven                                           |
+| Data | PostgreSQL, Oracle, Elasticsearch               |
+| Messaging | Kafka                                           |
 | Tooling | Docker, Jenkins, SonarQube, Nexus / Artifactory |
-| Testing | JUnit, Mockito |
+| Testing | JUnit, Mockito                                  |
 
 ---
 
