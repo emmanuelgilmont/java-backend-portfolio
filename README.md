@@ -32,6 +32,7 @@ Clean, production-minded backend code built around things I actually know:
 | Project | Description |
 |---|---|
 | [weather-api](./spring-boot/weather-api) | Spring Boot service consuming OpenWeatherMap — REST client, DTO mapping, error handling |
+| [discord-service](./spring-boot/discord-service) | Discord bot gateway — send private DMs and public channel messages via REST API, multi-user support, zero secrets in source |
 
 ### Quarkus
 
