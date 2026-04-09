@@ -42,13 +42,16 @@ Clean, production-minded backend code built around things I actually know:
 
 ### Starters & Libraries
 
-| Project | Description |
-|---|---|
-| [transaction-token-starter](./starters/transaction-token-starter) | Spring Boot Starter for automatic MDC-based transaction log correlation — drop-in, zero boilerplate |
+| Project                                                              | Description |
+|----------------------------------------------------------------------|---|
+| [transaction-token-starter](./spring-boot/transaction-token-starter) | Spring Boot Starter for automatic MDC-based transaction log correlation — drop-in, zero boilerplate |
 
 ### Kafka
 
-*Producer/consumer samples — coming soon*
+| Project                                                       | Description |
+|---------------------------------------------------------------|---|
+| [kafka-financial-pipeline](./kafka/kafka-financial-pipeline) | 🚧 In progress | Spring Boot 3, Kafka, Testcontainers |
+
 
 ### gRPC
 
