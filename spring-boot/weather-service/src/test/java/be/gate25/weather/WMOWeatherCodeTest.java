@@ -11,7 +11,7 @@ public class WMOWeatherCodeTest {
 
     @Test
     public void testSomeCode(){
-        assertEquals("Drizzle (heavy)", WMOWeatherCode.getMeaningFromCode(55));
+        assertEquals("\u2614 Drizzle (heavy)", WMOWeatherCode.getMeaningFromCode(55));
         assertEquals("Unknown code: 128", WMOWeatherCode.getMeaningFromCode(128));
     }
 
