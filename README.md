@@ -29,9 +29,9 @@ Clean, production-minded backend code built around things I actually know:
 
 ### Spring Boot
 
-| Project | Description |
-|---|---|
-| [weather-api](./spring-boot/weather-api) | Spring Boot service consuming OpenWeatherMap — REST client, DTO mapping, error handling |
+| Project                                          | Description |
+|--------------------------------------------------|---|
+| [weather-service](./spring-boot/weather-service) | Spring Boot service consuming OpenWeatherMap — REST client, DTO mapping, error handling |
 | [discord-service](./spring-boot/discord-service) | Discord bot gateway — send private DMs and public channel messages via REST API, multi-user support, zero secrets in source |
 
 ### Quarkus
@@ -42,9 +42,9 @@ Clean, production-minded backend code built around things I actually know:
 
 ### Starters & Libraries
 
-| Project                                                              | Description |
-|----------------------------------------------------------------------|---|
-| [transaction-token-starter](./spring-boot/transaction-token-starter) | Spring Boot Starter for automatic MDC-based transaction log correlation — drop-in, zero boilerplate |
+| Project                                                           | Description |
+|-------------------------------------------------------------------|---|
+| [transaction-token-starter](./starters/transaction-token-starter) | Spring Boot Starter for automatic MDC-based transaction log correlation — drop-in, zero boilerplate |
 
 ### Kafka
 
