@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "be.gate25.grpc.proto";
+option java_outer_classname = "PriceServiceProto";
+
+package price;
+
+service PriceService {
+  rpc GetPrice (PriceRequest) returns (PriceResponse);
+}
+
+message PriceRequest {
+  string symbol = 1; // e.g. "BEL20:UCB"
+}
+
+message PriceResponse {
+  string symbol    = 1;
+  double price     = 2;
+  string currency  = 3; // e.g. "EUR"
+  string timestamp = 4; // ISO-8601
+}
