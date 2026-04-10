@@ -48,14 +48,16 @@ Clean, production-minded backend code built around things I actually know:
 
 ### Kafka
 
-| Project                                                       | Description |
-|---------------------------------------------------------------|---|
-| [kafka-financial-pipeline](./kafka/kafka-financial-pipeline) | 🚧 In progress | Spring Boot 3, Kafka, Testcontainers |
+| Project | Description |
+|---|---|
+| [kafka-financial-pipeline](./kafka/kafka-financial-pipeline) | 🚧 In progress — trade event pipeline with DLQ and Testcontainers (Spring Boot 3, Kafka) |
 
 
 ### gRPC
 
-*Coming soon*
+| Project | Description |
+|---|---|
+| [grpc-price-service](./grpc/grpc-price-service) | gRPC unary service — financial price lookup with REST→gRPC bridge and MDC correlation propagation (Spring Boot 3) |
 
 ---
 
@@ -69,7 +71,7 @@ Clean, production-minded backend code built around things I actually know:
 | Framework | Spring Boot 2 / 3, Quarkus 3                    |
 | Build | Maven                                           |
 | Data | PostgreSQL, Oracle, Elasticsearch               |
-| Messaging | Kafka                                           |
+| Messaging | Kafka, gRPC                                     |
 | Tooling | Docker, Jenkins, SonarQube, Nexus / Artifactory |
 | Testing | JUnit, Mockito                                  |
 
