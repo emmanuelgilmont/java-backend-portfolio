@@ -1,6 +1,7 @@
 # transaction-token-starter
 
-A lightweight Spring Boot Starter that brings **automatic transaction log correlation** to any REST application — zero boilerplate for developers.
+> **Portfolio project — be.gate25**
+> A lightweight Spring Boot Starter that brings **automatic transaction log correlation** to any REST application — zero boilerplate for developers.
 
 ## The problem
 

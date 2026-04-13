@@ -1,6 +1,7 @@
 # discord-service
 
-A lightweight Spring Boot microservice that acts as a Discord bot gateway.  
+> **Portfolio project — be.gate25**
+> A lightweight Spring Boot microservice that acts as a Discord bot gateway.  
 It exposes a simple REST API to send private messages (DM) to one or more users, and public messages to a configured channel — without embedding any Discord logic in the caller.
 
 ---

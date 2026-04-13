@@ -29,11 +29,12 @@ Clean, production-minded backend code built around things I actually know:
 
 ### Spring Boot
 
-| Project                                          | Description |
-|--------------------------------------------------|---|
-| [weather-service](./spring-boot/weather-service) | Spring Boot service consuming OpenWeatherMap — REST client, DTO mapping, error handling |
-| [discord-service](./spring-boot/discord-service) | Discord bot gateway — send private DMs and public channel messages via REST API, multi-user support, zero secrets in source |
-| [fx-rate-service](./spring-boot/fx-rate-service) | FX rate lookup with Redis cache-aside — `@Cacheable`/`@CacheEvict`, per-cache TTL, Testcontainers integration test |
+|     Project                                                                        | Description |
+|------------------------------------------------------------------------------------|---|
+| [discord-service](./spring-boot/discord-service)                               | Discord bot gateway — send private DMs and public channel messages via REST API, multi-user support, zero secrets in source  |
+| [elasticsearch-formation-search](./elasticsearch/elasticsearch-formation-search) | Full-text document search over an FSCrawler-indexed NAS — Spring Data Elasticsearch, highlight, aggregations, Testcontainers |
+| [fx-rate-service](./spring-boot/fx-rate-service)                               | FX rate lookup with Redis cache-aside — `@Cacheable`/`@CacheEvict`, per-cache TTL, Testcontainers integration test           |
+| [weather-service](./spring-boot/weather-service)                               | Spring Boot service consuming OpenWeatherMap — REST client, DTO mapping, error handling                                      |
 
 ### Quarkus
 
@@ -49,15 +50,15 @@ Clean, production-minded backend code built around things I actually know:
 
 ### Kafka
 
-| Project | Description |
-|---|---|
+|     Project                                                      | Description |
+|------------------------------------------------------------------|---|
 | [kafka-financial-pipeline](./kafka/kafka-financial-pipeline) | 🚧 In progress — trade event pipeline with DLQ and Testcontainers (Spring Boot 3, Kafka) |
 
 
 ### gRPC
 
-| Project | Description |
-|---|---|
+|      Project                                         | Description |
+|------------------------------------------------------|---|
 | [grpc-price-service](./grpc/grpc-price-service) | gRPC unary service — financial price lookup with REST→gRPC bridge and MDC correlation propagation (Spring Boot 3) |
 
 ---
