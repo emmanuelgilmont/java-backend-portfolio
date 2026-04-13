@@ -33,6 +33,7 @@ Clean, production-minded backend code built around things I actually know:
 |--------------------------------------------------|---|
 | [weather-service](./spring-boot/weather-service) | Spring Boot service consuming OpenWeatherMap — REST client, DTO mapping, error handling |
 | [discord-service](./spring-boot/discord-service) | Discord bot gateway — send private DMs and public channel messages via REST API, multi-user support, zero secrets in source |
+| [fx-rate-service](./spring-boot/fx-rate-service) | FX rate lookup with Redis cache-aside — `@Cacheable`/`@CacheEvict`, per-cache TTL, Testcontainers integration test |
 
 ### Quarkus
 
@@ -63,17 +64,16 @@ Clean, production-minded backend code built around things I actually know:
 
 ## Tech stack
 
-**Production-proven**
-
-| Layer | Tech                                            |
-|---|-------------------------------------------------|
-| Language | Java 8 → 21                                     |
-| Framework | Spring Boot 2 / 3, Quarkus 3                    |
-| Build | Maven                                           |
-| Data | PostgreSQL, Oracle, Elasticsearch               |
-| Messaging | Kafka, gRPC                                     |
-| Tooling | Docker, Jenkins, SonarQube, Nexus / Artifactory |
-| Testing | JUnit, Mockito                                  |
+| Layer | Tech                                                 |
+|---|-------------------------------------------------------|
+| Language | Java 8 → 21                                       |
+| Framework | Spring Boot 2 / 3, Quarkus 3                     |
+| Build | Maven                                                |
+| Data | PostgreSQL, Oracle, Elasticsearch                     |
+| Messaging | Kafka, gRPC                                      |
+| Tooling | Docker, Jenkins, SonarQube, Nexus / Artifactory    |
+| Testing | JUnit, Mockito, Testcontainers                     |
+| Cache   | Redis, Caffeine                                    |
 
 ---
 

@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: fx-rate-service
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
+  cache:
+    type: redis
+    redis:
+      # Default TTL for all caches — overridden per-cache in CacheConfig
+      time-to-live: 60s
+      cache-null-values: false
+
+# Actuator: expose cache + health endpoints
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, caches, metrics
+  endpoint:
+    health:
+      show-details: always
+
+# Application-level cache TTL (seconds) — consumed by CacheConfig
+fx-rate:
+  cache:
+    ttl-seconds:
+      fx-rates: 60        # live FX pairs
+      fx-rates-meta: 300  # static metadata (pair descriptions)
