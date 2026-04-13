@@ -1,0 +1,13 @@
+spring:
+  cache:
+    # Caffeine = cache en mémoire, zéro infra, même abstraction Spring Cache
+    # Utilisé par les tests locaux (mvn test, pas de Docker requis)
+    type: caffeine
+    caffeine:
+      spec: maximumSize=500,expireAfterWrite=60s
+
+  # Désactive l'auto-configuration Redis pour ne pas planter au démarrage
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration

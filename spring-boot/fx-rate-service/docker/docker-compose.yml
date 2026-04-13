@@ -1,0 +1,29 @@
+services:
+
+  redis:
+    image: redis:7.2-alpine
+    container_name: fx-rate-redis
+    ports:
+      - "6379:6379"
+    command: >
+      redis-server
+        --maxmemory 128mb
+        --maxmemory-policy allkeys-lru
+        --save ""
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  fx-rate-service:
+    build: .
+    container_name: fx-rate-service
+    ports:
+      - "8080:8080"
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      redis:
+        condition: service_healthy

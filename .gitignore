@@ -9,6 +9,7 @@ application-local.properties
 secrets/
 .spring-boot-devtools.properties
 TODO.md
+_private/
 
 # ==============================================================================
 # Maven
