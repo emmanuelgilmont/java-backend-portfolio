@@ -9,9 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.elasticsearch.ElasticsearchContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -27,14 +26,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SearchServiceIntegrationTest {
 
     @Container
+    @ServiceConnection
     static ElasticsearchContainer es = new ElasticsearchContainer(
         "docker.elastic.co/elasticsearch/elasticsearch:8.19.8"
     ).withEnv("xpack.security.enabled", "false");
-
-    @DynamicPropertySource
-    static void properties(DynamicPropertyRegistry registry) {
-        registry.add("spring.elasticsearch.uris", es::getHttpHostAddress);
-    }
 
     @Autowired
     private ElasticsearchOperations operations;
@@ -44,14 +39,14 @@ class SearchServiceIntegrationTest {
 
     @BeforeAll
     void setup() {
-        // Créer l'index et indexer des documents de test
+        // Create the index and seed test documents
         operations.indexOps(FormationDocument.class).createWithMapping();
 
         index("1", "Introduction to Spring Boot", "Spring Boot makes it easy to create stand-alone applications.", "pdf", "/formations/spring");
         index("2", "Apache Kafka in Practice",    "Kafka is a distributed event streaming platform.",              "pdf", "/formations/kafka");
         index("3", "Docker for Developers",       "Docker containers package your application and its dependencies.", "mp4", "/webinaires/docker");
 
-        // Laisser ES indexer
+        // Allow ES to index
         operations.indexOps(FormationDocument.class).refresh();
     }
 
