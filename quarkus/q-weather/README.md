@@ -1,6 +1,7 @@
 # q-weather
 
-Quarkus microservice that fetches current conditions and a short-range forecast
+> **Portfolio project — be.gate25**
+> Quarkus microservice that fetches current conditions and a short-range forecast
 for any Belgian location, using the free [Open-Meteo](https://open-meteo.com/) API.
 
 ## What it does

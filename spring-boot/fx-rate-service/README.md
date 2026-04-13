@@ -214,8 +214,8 @@ GET /actuator/metrics/cache.gets?tag=name:fx-rates   → hit / miss counters
 | Project | Connection |
 |---|---|
 | `weather-service` / `q-weather` | Same cache-aside pattern, different domain |
-| **#1 Kafka Financial Pipeline** | `fx-rates` cache will serve reference data to stream processors |
-| **#4 PostgreSQL + Flyway**      | Add DB-backed rate history; cache sits in front of the read path |
+| **Kafka Financial Pipeline** | `fx-rates` cache will serve reference data to stream processors |
+| **PostgreSQL + Flyway**      | Add DB-backed rate history; cache sits in front of the read path |
 
 ---
 
