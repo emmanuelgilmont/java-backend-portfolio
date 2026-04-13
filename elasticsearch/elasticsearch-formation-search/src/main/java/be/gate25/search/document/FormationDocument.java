@@ -38,9 +38,9 @@ public class FormationDocument {
         @Field(name = "content_type")
         private String contentType;
         private Long filesize;
-        @Field(name = "last_modified",type = FieldType.Date, format = DateFormat.date_time)
+        @Field(name = "last_modified",type = FieldType.Date, format = DateFormat.date_optional_time)
         private Instant lastModified;
-        @Field(type = FieldType.Date, format = DateFormat.date_time)
+        @Field(type = FieldType.Date, format = DateFormat.date_optional_time)
         private Instant created;
     }
 
