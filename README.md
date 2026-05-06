@@ -54,13 +54,17 @@ Clean, production-minded backend code built around things I actually know:
 |------------------------------------------------------------------|---|
 | [kafka-financial-pipeline](./kafka/kafka-financial-pipeline) | 🚧 In progress — trade event pipeline with DLQ and Testcontainers (Spring Boot 3, Kafka) |
 
-
 ### gRPC
 
 |      Project                                         | Description |
 |------------------------------------------------------|---|
 | [grpc-price-service](./grpc/grpc-price-service) | gRPC unary service — financial price lookup with REST→gRPC bridge and MDC correlation propagation (Spring Boot 3) |
 
+### Automation
+
+| Project | Description |
+|---|---|
+| [gmail-automation](./automation/gmail-automation) | Twice-daily Gmail triage — Claude Haiku classifies job opportunities, deduplicates against 7-day history, logs to Google Sheets, notifies via Telegram |
 ---
 
 ## Tech stack
@@ -94,7 +98,7 @@ boring, careful where it matters.
 25+ years of backend experience. Currently available for contracts.
 
 [LinkedIn](https://www.linkedin.com/in/emmanuelgilmont) |
-[gate25.be](https://gate25.be) |
+[gate25.be](https://gate25.be) — built with Stitch, Claude & Claude Code |
 [code@gate25.be](mailto:code@gate25.be)
 
 ---
