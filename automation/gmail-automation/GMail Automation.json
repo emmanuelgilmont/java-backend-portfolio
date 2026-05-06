@@ -1,0 +1,945 @@
+{
+  "name": "GMail Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "hour": 6,
+              "minute": 12
+            },
+            {
+              "hour": 18,
+              "minute": 12
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "readStatus": "unread"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -240,
+        -304
+      ],
+      "id": "20ce00b9-4306-4576-8b68-bc4dfd4c1c24",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "RSmL2IzAA53SE652",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Tu es un assistant qui analyse des emails reçus par un freelance Java senior belge.\n\nAnalyse cet email et dis-moi s'il s'agit d'une opportunité professionnelle Java/backend.\n- Mission freelance (taux journalier, durée déterminée, via intermédiaire/cabinet) : score 8-10, est_jd = true\n- CDI/CDD (contrat permanent, employeur direct, salaire mensuel) : score 5-7, est_jd = true\n- Non pertinent (mauvaise stack, hors Belgique, spam) : score 1-4, est_jd = false\n\nSujet : {{ $json.subject }}\nExpéditeur : {{ $json.from.value[0].address }}\nContenu : {{ $json.text }}\n\nRéponds UNIQUEMENT avec ce format JSON brut, sans backticks, sans markdown, sans texte avant ni après :\n{\n  \"est_jd\": true ou false,\n  \"score\": chiffre de 1 à 10,\n  \"raison\": \"explication courte\"\n}",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        208,
+        -304
+      ],
+      "id": "37968f7a-5d2d-4161-acee-619fd5413dd9",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-haiku-4-5-20251001",
+          "mode": "list",
+          "cachedResultName": "Claude Haiku 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        -80
+      ],
+      "id": "9469ea65-bf7c-4f4c-82f7-86291e4cc86b",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "DsKxOH31KvOFg69V",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"est_jd\": {\n      \"type\": \"boolean\",\n      \"description\": \"true si c'est une proposition de mission freelance Java/backend, false sinon\"\n    },\n    \"score\": {\n      \"type\": \"number\",\n      \"description\": \"score de pertinence de 1 à 10\"\n    },\n    \"raison\": {\n      \"type\": \"string\",\n      \"description\": \"explication courte en français\"\n    }\n  },\n  \"required\": [\"est_jd\", \"score\", \"raison\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        -80
+      ],
+      "id": "ac4967b4-3ae8-4748-ba6c-338b8e02e298",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "93c9473a-2dac-458a-bb5d-d561333f9e5e",
+              "leftValue": "={{ $json.output.est_jd }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "3a8220dd-d0f5-48ef-b0f6-44ff3c124812",
+              "leftValue": "={{ $json.output.score }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        560,
+        -304
+      ],
+      "id": "2ea0300a-0508-42a8-a47e-8848ee597427",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_564422311621637964"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        784,
+        -432
+      ],
+      "id": "9479678c-936f-4824-9b52-c158b2ea1d20",
+      "name": "Add label to message",
+      "webhookId": "1fc815b3-8f03-470e-b0d3-80de20b199ff",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "RSmL2IzAA53SE652",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "496614666",
+        "text": "=Scan Gmail terminé\n{{ $json.total }} analysés\n{{ $json.jds_detectees }} JDs détectées ",
+        "additionalFields": {
+          "disable_web_page_preview": true
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2928,
+        -304
+      ],
+      "id": "31c74810-7894-46cc-9c5c-331f4ddfb54b",
+      "name": "Send a text message",
+      "webhookId": "3cf32e3f-8c9f-42a8-83ee-0d45d789fd3a",
+      "credentials": {
+        "telegramApi": {
+          "id": "S24TykJ5X9mW5FMh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2480,
+        -304
+      ],
+      "id": "ef41df8f-73e2-4643-bc70-bfd41f8c5973",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst total = items.length;\nconst jds = items.filter(item => item.json.est_jd === true).length;\n\nreturn [{\n  json: {\n    total: total,\n    jds_detectees: jds\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2704,
+        -304
+      ],
+      "id": "89efef7d-f80e-469d-afd2-ce5a215915b2",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c004aa8b-cfb7-4805-941d-56ba0cbc39ed",
+              "name": "est_jd",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2256,
+        -432
+      ],
+      "id": "2fc00fed-04ee-4cf1-a3c1-574413b6de5c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "48ff1ab5-d836-4702-98a5-f9256d16dfa3",
+              "name": "est_jd",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1904,
+        16
+      ],
+      "id": "a4f943f0-5101-4016-8455-55da502334c1",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const now = new Date();\n\nconst h = parseInt(new Intl.DateTimeFormat('fr-BE', { \n  hour: 'numeric', hour12: false, \n  timeZone: 'Europe/Brussels' \n}).format(now));\n\nconst m = parseInt(new Intl.DateTimeFormat('fr-BE', { \n  minute: 'numeric', \n  timeZone: 'Europe/Brussels' \n}).format(now));\n\nconst plage1 = (h === 6 && m >= 5 && m <= 20);\nconst plage2 = (h === 18 && m >= 5 && m <= 20);\n\nif (!plage1 && !plage2) {\n  throw new Error(`Hors plage — ${h}h${m} — exécution annulée.`);\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        -304
+      ],
+      "id": "5923a353-21a5-451a-bcad-ffa0a81dc441",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "documentId": {
+          "__rl": true,
+          "value": "10VPhWLtZv4KN6hPAZQCRCY1QToSvrHbhvLFWm_E1cug",
+          "mode": "list",
+          "cachedResultName": "JD_Tracker",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10VPhWLtZv4KN6hPAZQCRCY1QToSvrHbhvLFWm_E1cug/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "JD-DATA",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/10VPhWLtZv4KN6hPAZQCRCY1QToSvrHbhvLFWm_E1cug/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": []
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "detectAutomatically"
+            }
+          },
+          "outputFormatting": {
+            "values": {
+              "general": "UNFORMATTED_VALUE",
+              "date": "FORMATTED_STRING"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1008,
+        -432
+      ],
+      "id": "d69e530a-3fdb-4d02-9bff-5876e3957d6e",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleApi": {
+          "id": "GmQ8j2SWAEmp5jmn",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Données du mail en cours (depuis le Gmail Trigger)\nconst currentMail = $('Gmail Trigger').item.json;\nconst currentBody = currentMail.text || '';\nconst currentSubject = currentMail.subject || '';\n\n// Lignes du Google Sheet (depuis Get Rows)\nconst rows = $input.all();\n\n// Filtre : 7 derniers jours, score >= 7, exclure doublons déjà détectés\nconst sevenDaysAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);\n\nconst recentJDs = rows\n  .map(r => r.json)\n  .filter(r => {\n    const rowDate = new Date(r['Date']).getTime();\n    const score = parseInt(r['Score']) || 0;\n    const statut = r['Statut'] || '';\n    return rowDate >= sevenDaysAgo && score >= 7 && statut !== 'doublon-maybe';\n  })\n  .map(r => ({\n    id: r['Mail-ID'],\n    sujet: r['Sujet'],\n    raison: r['Raison']\n  }));\n\nreturn [{\n  json: {\n    currentSubject,\n    currentBody,\n    currentMailId: currentMail.id,\n    recentJDs\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        -432
+      ],
+      "id": "8bdc1919-2868-4973-9b30-3671f4aef02b",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Tu es un assistant qui détecte les doublons de propositions de mission freelance.\n\nVoici une nouvelle proposition reçue :\nSujet : {{ $json.currentSubject }}\nContenu : {{ $json.currentBody }}\n\nVoici les propositions récentes (7 derniers jours) :\n{{ JSON.stringify($json.recentJDs) }}\n\nEst-ce que la nouvelle proposition correspond au même poste que l'une des propositions récentes ?\nRéponds UNIQUEMENT avec ce format JSON brut, sans backticks, sans markdown :\n{\n  \"doublon\": true ou false,\n  \"ref_id\": \"Mail-ID de la proposition similaire ou null\",\n  \"confiance\": nombre entre 0 et 1\n}",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1456,
+        -432
+      ],
+      "id": "a9f9a39b-d7b4-4af8-9954-df36bbb2ea59",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-haiku-4-5-20251001",
+          "mode": "list",
+          "cachedResultName": "Claude Haiku 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        1456,
+        -208
+      ],
+      "id": "1dd3f9c1-5ea8-4844-99b5-eb26821ba797",
+      "name": "Anthropic Chat Model1",
+      "credentials": {
+        "anthropicApi": {
+          "id": "DsKxOH31KvOFg69V",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"doublon\": {\n      \"type\": \"boolean\"\n    },\n    \"ref_id\": {\n      \"type\": \"string\",\n      \"nullable\": true\n    },\n    \"confiance\": {\n      \"type\": \"number\"\n    }\n  },\n  \"required\": [\"doublon\", \"ref_id\", \"confiance\"]\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1600,
+        -208
+      ],
+      "id": "4d31f217-1bf4-44c4-adb3-0cd085e66ad1",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "10VPhWLtZv4KN6hPAZQCRCY1QToSvrHbhvLFWm_E1cug",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "JD-DATA",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $now }}",
+            "Expéditeur": "={{ $('Gmail Trigger').item.json.from.value[0].address }}",
+            "Sujet": "={{ $('Gmail Trigger').item.json.subject }}",
+            "Score": "={{ $('Basic LLM Chain').item.json.output.score }}",
+            "Raison": "={{ $('Basic LLM Chain').item.json.output.raison }}",
+            "Statut": "doublon-maybe",
+            "Mail-ID": "={{ $('Gmail Trigger').item.json.id }}",
+            "Body": "={{ $('Gmail Trigger').item.json.text }}",
+            "Ref_ID": "={{ $json.output.ref_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Mail-ID",
+              "displayName": "Mail-ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Expéditeur",
+              "displayName": "Expéditeur",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sujet",
+              "displayName": "Sujet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Raison",
+              "displayName": "Raison",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Statut",
+              "displayName": "Statut",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ref_ID",
+              "displayName": "Ref_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Body",
+              "displayName": "Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2032,
+        -528
+      ],
+      "id": "555eee75-30ba-4680-ae5f-4de2f6250e4e",
+      "name": "Append row in sheet - doublon",
+      "credentials": {
+        "googleApi": {
+          "id": "GmQ8j2SWAEmp5jmn",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "10VPhWLtZv4KN6hPAZQCRCY1QToSvrHbhvLFWm_E1cug",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "JD-DATA",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $now }}",
+            "Expéditeur": "={{ $('Gmail Trigger').item.json.from.value[0].address }}",
+            "Sujet": "={{ $('Gmail Trigger').item.json.subject }}",
+            "Score": "={{ $('Basic LLM Chain').item.json.output.score }}",
+            "Raison": "={{ $('Basic LLM Chain').item.json.output.raison }}",
+            "Statut": "À traiter",
+            "Mail-ID": "={{ $('Gmail Trigger').item.json.id }}",
+            "Body": "={{ $('Gmail Trigger').item.json.text }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Mail-ID",
+              "displayName": "Mail-ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Expéditeur",
+              "displayName": "Expéditeur",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sujet",
+              "displayName": "Sujet",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Raison",
+              "displayName": "Raison",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Statut",
+              "displayName": "Statut",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Ref_ID",
+              "displayName": "Ref_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Body",
+              "displayName": "Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        2032,
+        -336
+      ],
+      "id": "c5dcfd14-c97c-4b10-952e-5c9f3e1ac16d",
+      "name": "Append row in sheet - normal",
+      "credentials": {
+        "googleApi": {
+          "id": "GmQ8j2SWAEmp5jmn",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f9283a87-66a5-43f4-b28f-93280aef3205",
+              "leftValue": "={{ $json.output.doublon }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1808,
+        -432
+      ],
+      "id": "eefc3bcd-e0e4-4459-bcd2-d2204ea36b30",
+      "name": "If doublon"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Add label to message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain1": {
+      "main": [
+        [
+          {
+            "node": "If doublon",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet - doublon": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet - normal": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If doublon": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet - doublon",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet - normal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "f95d7ecf-b08c-412c-897e-85343e14bc5e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "03fac866e8ebd4b0cc57f0397ef4d61183d32cf29f7073da815c05f4785d1fd4"
+  },
+  "id": "2sQo07qrNVW8hSHG",
+  "tags": [
+    {
+      "updatedAt": "2026-05-02T16:07:11.707Z",
+      "createdAt": "2026-05-02T16:07:11.707Z",
+      "id": "IyhDJSfUXdIqjEZm",
+      "name": "working"
+    }
+  ]
+}
