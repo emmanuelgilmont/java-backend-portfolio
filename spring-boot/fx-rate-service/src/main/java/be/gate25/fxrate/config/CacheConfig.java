@@ -1,10 +1,13 @@
 package be.gate25.fxrate.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -28,9 +31,7 @@ import java.util.Map;
  * <p>Values are serialized as JSON (Jackson) so they are human-readable in Redis CLI
  * and survive application restarts without class-path coupling.
  */
-@Configuration
-@org.springframework.context.annotation.Profile("!test")
-public class CacheConfig {
+@Configuration @org.springframework.context.annotation.Profile("!test") public class CacheConfig {
 
     /** Cache names — single source of truth, also used in @Cacheable annotations. */
     public static final String CACHE_FX_RATES      = "fx-rates";
@@ -42,49 +43,59 @@ public class CacheConfig {
         this.ttlProperties = ttlProperties;
     }
 
-    @Bean
-    public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
+    @Bean public CacheManager cacheManager(RedisConnectionFactory connectionFactory) {
         RedisCacheConfiguration defaultConfig = defaultCacheConfig();
 
         Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();
-        cacheConfigs.put(CACHE_FX_RATES,
-                defaultConfig.entryTtl(Duration.ofSeconds(ttlProperties.getFxRatesTtl())));
-        cacheConfigs.put(CACHE_FX_RATES_META,
-                defaultConfig.entryTtl(Duration.ofSeconds(ttlProperties.getFxRatesMetaTtl())));
+        cacheConfigs.put(CACHE_FX_RATES, defaultConfig.entryTtl(Duration.ofSeconds(ttlProperties.getFxRatesTtl())));
+        cacheConfigs.put(CACHE_FX_RATES_META, defaultConfig.entryTtl(Duration.ofSeconds(ttlProperties.getFxRatesMetaTtl())));
 
-        return RedisCacheManager.builder(connectionFactory)
-                .cacheDefaults(defaultConfig)
-                .withInitialCacheConfigurations(cacheConfigs)
-                .build();
+        return RedisCacheManager.builder(connectionFactory).cacheDefaults(defaultConfig).withInitialCacheConfigurations(cacheConfigs).build();
     }
 
     private RedisCacheConfiguration defaultCacheConfig() {
-        return RedisCacheConfiguration.defaultCacheConfig()
-                .disableCachingNullValues()
-                // Keys: plain strings — readable in redis-cli
-                .serializeKeysWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-                // Values: JSON — survives restarts, inspectable
-                .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(
-                                new GenericJackson2JsonRedisSerializer()));
+        // Dedicated ObjectMapper for Redis serialization: registers JavaTimeModule so
+        // java.time types (Instant, LocalDate, ...) serialize correctly, and re-activates
+        // default typing (embeds a "@class" property in the JSON) so deserialization can
+        // reconstruct the exact runtime type on cache read - GenericJackson2JsonRedisSerializer
+        // needs this explicitly when built from a custom ObjectMapper instead of its no-arg
+        // constructor.
+        ObjectMapper redisObjectMapper = new ObjectMapper();
+        redisObjectMapper.registerModule(new JavaTimeModule());
+        redisObjectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        BasicPolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator.builder().allowIfSubType("be.gate25.fxrate.domain").allowIfSubType("java.math")
+            .allowIfSubType("java.time").build();
+        redisObjectMapper.activateDefaultTyping(typeValidator, ObjectMapper.DefaultTyping.EVERYTHING);
+
+        return RedisCacheConfiguration.defaultCacheConfig().disableCachingNullValues()
+            .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+            .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer(redisObjectMapper)));
     }
 
     // ---------------------------------------------------------------------------
     // TTL properties — bound from application.yml fx-rate.cache.ttl-seconds.*
     // ---------------------------------------------------------------------------
 
-    @ConfigurationProperties(prefix = "fx-rate.cache.ttl-seconds")
-    @org.springframework.stereotype.Component
-    public static class CacheTtlProperties {
+    @ConfigurationProperties(prefix = "fx-rate.cache.ttl-seconds") @org.springframework.stereotype.Component public static class CacheTtlProperties {
 
-        private long fxRates = 60;
+        private long fxRates     = 60;
         private long fxRatesMeta = 300;
 
-        public long getFxRatesTtl()     { return fxRates; }
-        public long getFxRatesMetaTtl() { return fxRatesMeta; }
+        public long getFxRatesTtl() {
+            return fxRates;
+        }
 
-        public void setFxRates(long fxRates)         { this.fxRates = fxRates; }
-        public void setFxRatesMeta(long fxRatesMeta) { this.fxRatesMeta = fxRatesMeta; }
+        public long getFxRatesMetaTtl() {
+            return fxRatesMeta;
+        }
+
+        public void setFxRates(long fxRates) {
+            this.fxRates = fxRates;
+        }
+
+        public void setFxRatesMeta(long fxRatesMeta) {
+            this.fxRatesMeta = fxRatesMeta;
+        }
     }
 }

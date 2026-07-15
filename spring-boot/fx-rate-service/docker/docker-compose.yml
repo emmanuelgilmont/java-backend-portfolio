@@ -27,3 +27,44 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+
+  # --- New: Prometheus ---
+  # Joins the default compose network automatically, same as redis/fx-rate-service above -
+  # no custom network needed, DNS resolution by service name already works.
+  prometheus:
+    image: prom/prometheus:v3.13.1
+    # Check the latest LTS/stable version when you deploy this:
+    # https://github.com/prometheus/prometheus/releases (v3.13.0 is the July 2026 LTS)
+    container_name: fx-rate-prometheus
+    depends_on:
+      - fx-rate-service
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+
+  # --- New: Grafana ---
+  grafana:
+    image: grafana/grafana-oss:13.1.0
+    # Check the latest stable version: https://github.com/grafana/grafana/releases
+    container_name: fx-rate-grafana
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      # Change this password before any deployment reachable beyond your homelab.
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+volumes:
+  prometheus-data:
+  grafana-data:

@@ -1,0 +1,103 @@
+{
+  "title": "fx-rate-service — Observability",
+  "uid": "fx-rate-service-obs",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "time": { "from": "now-30m", "to": "now" },
+  "tags": ["portfolio", "be.gate25", "fx-rate-service"],
+  "panels": [
+    {
+      "id": 1,
+      "title": "HTTP request latency (p50 / p95 / p99)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": { "unit": "s", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.50, sum(rate(http_server_requests_seconds_bucket{application=\"fx-rate-service\"}[1m])) by (le, uri))",
+          "legendFormat": "p50 {{uri}}"
+        },
+        {
+          "refId": "B",
+          "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{application=\"fx-rate-service\"}[1m])) by (le, uri))",
+          "legendFormat": "p95 {{uri}}"
+        },
+        {
+          "refId": "C",
+          "expr": "histogram_quantile(0.99, sum(rate(http_server_requests_seconds_bucket{application=\"fx-rate-service\"}[1m])) by (le, uri))",
+          "legendFormat": "p99 {{uri}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Error rate (4xx / 5xx)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": { "unit": "percentunit", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "legendFormat": "4xx ratio",
+          "expr": "sum(rate(http_server_requests_seconds_count{application=\"fx-rate-service\", status=~\"4..\"}[1m])) / sum(rate(http_server_requests_seconds_count{application=\"fx-rate-service\"}[1m]))"
+        },
+        {
+          "refId": "B",
+          "legendFormat": "5xx ratio",
+          "expr": "sum(rate(http_server_requests_seconds_count{application=\"fx-rate-service\", status=~\"5..\"}[1m])) / sum(rate(http_server_requests_seconds_count{application=\"fx-rate-service\"}[1m]))"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "JVM heap usage (used / max)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": { "unit": "bytes", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "legendFormat": "heap used",
+          "expr": "sum(jvm_memory_used_bytes{application=\"fx-rate-service\", area=\"heap\"})"
+        },
+        {
+          "refId": "B",
+          "legendFormat": "heap max",
+          "expr": "sum(jvm_memory_max_bytes{application=\"fx-rate-service\", area=\"heap\"})"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "GC pause time (rate)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 8 },
+      "datasource": { "type": "prometheus", "uid": "Prometheus" },
+      "fieldConfig": {
+        "defaults": { "unit": "s", "custom": { "drawStyle": "line", "lineWidth": 2, "fillOpacity": 10 } },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "legendFormat": "{{action}} / {{cause}}",
+          "expr": "sum(rate(jvm_gc_pause_seconds_sum{application=\"fx-rate-service\"}[5m])) by (action, cause)"
+        }
+      ]
+    }
+  ]
+}
