@@ -33,7 +33,7 @@ Clean, production-minded backend code built around things I actually know:
 |------------------------------------------------------------------------------------|---|
 | [discord-service](./spring-boot/discord-service)                               | Discord bot gateway — send private DMs and public channel messages via REST API, multi-user support, zero secrets in source  |
 | [elasticsearch-formation-search](./elasticsearch/elasticsearch-formation-search) | Full-text document search over an FSCrawler-indexed NAS — Spring Data Elasticsearch, highlight, aggregations, Testcontainers |
-| [fx-rate-service](./spring-boot/fx-rate-service)                               | FX rate lookup with Redis cache-aside — `@Cacheable`/`@CacheEvict`, per-cache TTL, Testcontainers integration test           |
+| [fx-rate-service](./spring-boot/fx-rate-service)                               | FX rate lookup with Redis cache-aside — `@Cacheable`/`@CacheEvict`, per-cache TTL, Testcontainers integration test, Prometheus/Grafana observability |
 | [weather-service](./spring-boot/weather-service)                               | Spring Boot service consuming OpenWeatherMap — REST client, DTO mapping, error handling                                      |
 
 ### Quarkus
@@ -75,17 +75,18 @@ Clean, production-minded backend code built around things I actually know:
 
 ## Tech stack
 
-| Layer | Tech                                            |
-|---|-------------------------------------------------|
-| Language | Java 8 → 21                                     |
-| Framework | Spring Boot 2 / 3, Quarkus 3                    |
-| Build | Maven                                           |
-| Data | PostgreSQL, Oracle, Elasticsearch               |
-| Messaging | Kafka, gRPC                                     |
-| Tooling | Docker, Jenkins, SonarQube, Nexus / Artifactory |
-| Testing | JUnit, Mockito, Testcontainers                  |
-| Cache   | Redis, Caffeine                                 |
-| Batch   | Spring Batch 5                                  |
+| Layer | Tech                                              |
+|---|---------------------------------------------------|
+| Language | Java 8 → 21                                       |
+| Framework | Spring Boot 2 / 3, Quarkus 3                      |
+| Build | Maven                                             |
+| Data | PostgreSQL, Oracle, Elasticsearch                |
+| Messaging | Kafka, gRPC                                       |
+| Tooling | Docker, Jenkins, SonarQube, Nexus / Artifactory   |
+| Testing | JUnit, Mockito, Testcontainers                    |
+| Cache   | Redis, Caffeine                                   |
+| Monitoring | Prometheus, Grafana                               |
+| Batch   | Spring Batch 5                                    |
 
 ---
 
