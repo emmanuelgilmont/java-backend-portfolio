@@ -29,48 +29,56 @@ Clean, production-minded backend code built around things I actually know:
 
 ### Spring Boot
 
-|     Project                                                                        | Description |
-|------------------------------------------------------------------------------------|---|
-| [discord-service](./spring-boot/discord-service)                               | Discord bot gateway — send private DMs and public channel messages via REST API, multi-user support, zero secrets in source  |
-| [elasticsearch-formation-search](./elasticsearch/elasticsearch-formation-search) | Full-text document search over an FSCrawler-indexed NAS — Spring Data Elasticsearch, highlight, aggregations, Testcontainers |
-| [fx-rate-service](./spring-boot/fx-rate-service)                               | FX rate lookup with Redis cache-aside — `@Cacheable`/`@CacheEvict`, per-cache TTL, Testcontainers integration test, Prometheus/Grafana observability |
-| [weather-service](./spring-boot/weather-service)                               | Spring Boot service consuming OpenWeatherMap — REST client, DTO mapping, error handling                                      |
+<table style="width:100%">
+  <tr><th style="width:20%">Project</th><th style="width:80%">Description</th></tr>
+  <tr><td><a href="./spring-boot/discord-service">discord-service</a></td><td>Discord bot gateway — send private DMs and public channel messages via REST API, multi-user support, zero secrets in source</td></tr>
+  <tr><td><a href="./spring-boot/elasticsearch-formation-search">elasticsearch-formation-search</a></td><td>Full-text document search over an FSCrawler-indexed NAS — Spring Data Elasticsearch, highlight, aggregations, Testcontainers</td></tr>
+  <tr><td><a href="./spring-boot/fx-rate-service">fx-rate-service</a></td><td>FX rate lookup with Redis cache-aside — <code>@Cacheable</code>/<code>@CacheEvict</code>, per-cache TTL, Testcontainers integration test, Prometheus/Grafana observability</td></tr>
+  <tr><td><a href="./spring-boot/weather-api">weather-api</a></td><td>Spring Boot service consuming OpenWeatherMap — REST client, DTO mapping, error handling </td></tr>
+</table>
 
 ### Quarkus
 
-| Project | Description |
-|---|---|
-| [q-weather](./quarkus/q-weather) | Quarkus equivalent of weather-api — same domain, different stack. MicroProfile REST Client, Caffeine cache, human-readable endpoint |
+<table style="width:100%">
+  <tr><th style="width:20%">Project</th><th style="width:80%">Description</th></tr>
+  <tr><td><a href="./quarkus/q-weather">q-weather</a></td><td>Quarkus equivalent of weather-api — same domain, different stack. MicroProfile REST Client, Caffeine cache, human-readable endpoint</td></tr>
+</table>
 
 ### Starters & Libraries
 
-| Project                                                           | Description |
-|-------------------------------------------------------------------|---|
-| [transaction-token-starter](./starters/transaction-token-starter) | Spring Boot Starter for automatic MDC-based transaction log correlation — drop-in, zero boilerplate |
+<table style="width:100%">
+  <tr><th style="width:20%">Project</th><th style="width:80%">Description</th></tr>
+  <tr><td><a href="./starters/transaction-token-starter">transaction-token-starter</a></td><td>Spring Boot Starter for automatic MDC-based transaction log correlation — drop-in, zero boilerplate</td></tr>
+</table>
 
 ### Kafka
 
-|     Project                                                      | Description |
-|------------------------------------------------------------------|---|
-| [kafka-financial-pipeline](./kafka/kafka-financial-pipeline) | 🚧 In progress — trade event pipeline with DLQ and Testcontainers (Spring Boot 3, Kafka) |
+<table style="width:100%">
+  <tr><th style="width:20%">Project</th><th style="width:80%">Description</th></tr>
+  <tr><td><a href="./kafka/kafka-financial-pipeline">kafka-financial-pipeline</a></td><td>🚧 In progress — trade event pipeline with DLQ and Testcontainers (Spring Boot 3, Kafka)</td></tr>
+</table>
 
 ### Batch
 
-| Project | Description |
-|---|---|
-| [trade-settlement-batch](./batch/trade-settlement-batch) | EOD trade settlement batch — `FlatFileItemReader`, `CompositeItemWriter` (DB + CSV), T+2 calculation, two-layer testing strategy (H2 / Testcontainers PostgreSQL) |
+<table style="width:100%">
+  <tr><th style="width:20%">Project</th><th style="width:80%">Description</th></tr>
+  <tr><td><a href="./batch/trade-settlement-batch">trade-settlement-batch</a></td><td>EOD trade settlement batch — <code>FlatFileItemReader</code>, <code>CompositeItemWriter</code> (DB + CSV), T+2 calculation, two-layer testing strategy (H2 / Testcontainers PostgreSQL)</td></tr>
+</table>
 
 ### gRPC
 
-|      Project                                         | Description |
-|------------------------------------------------------|---|
-| [grpc-price-service](./grpc/grpc-price-service) | gRPC unary service — financial price lookup with REST→gRPC bridge and MDC correlation propagation (Spring Boot 3) |
+<table style="width:100%">
+  <tr><th style="width:20%">Project</th><th style="width:80%">Description</th></tr>
+  <tr><td><a href="./grpc/grpc-price-service">grpc-price-service</a></td><td>gRPC unary service — financial price lookup with REST→gRPC bridge and MDC correlation propagation (Spring Boot 3)</td></tr>
+</table>
 
 ### Automation
 
-| Project | Description |
-|---|---|
-| [gmail-automation](./automation/gmail-automation) | Twice-daily Gmail triage — Claude Haiku classifies job opportunities, deduplicates against 7-day history, logs to Google Sheets, notifies via Telegram |
+<table style="width:100%">
+  <tr><th style="width:20%">Project</th><th style="width:80%">Description</th></tr>
+  <tr><td><a href="./automation/gmail-automation">gmail-automation</a></td><td>Twice-daily Gmail triage — Claude Haiku classifies job opportunities, deduplicates against 7-day history, logs to Google Sheets, notifies via Telegram</td></tr>
+</table>
+
 ---
 
 ## Tech stack
