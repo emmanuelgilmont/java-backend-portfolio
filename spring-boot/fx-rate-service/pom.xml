@@ -40,10 +40,42 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
-        <!-- Actuator (cache metrics) -->
+        <!-- Actuator: exposes /actuator/health, /actuator/prometheus, /actuator/metrics -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <!-- Micrometer Prometheus registry: translates Micrometer metrics into the Prometheus
+             text format, exposed via the /actuator/prometheus endpoint.
+             Version is managed automatically by spring-boot-starter-parent (dependency
+             management), no need to pin a version here. -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Structured JSON logging (MDC correlation token automatically included in every line).
+             Version 9.0 = latest published on Maven Central as of 2025-10-27 (re-checked
+             2026-07-15, no newer version found at that date - re-confirm if several months
+             have passed: https://mvnrepository.com/artifact/net.logstash.logback/logstash-logback-encoder) -->
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>8.1</version> <!-- 8.x uses Jackson 2 while 9.x uses Jackson 3 which is default starting Spring Boot 4 only-->
+        </dependency>
+
+        <!-- Reuses the in-house starter for MDC correlation (X-Correlation-ID -> MDC -> response).
+             Requires a prior `mvn install` of be.gate25:transaction-token-starter locally,
+             or a `mvn deploy` to your Nexus if you have one.
+             Alternative: if you'd rather NOT couple fx-rate-service to this starter, so it stays
+             a "portfolio" project that reads standalone, let me know and I'll provide a small
+            self-contained CorrelationIdFilter instead (a few lines, no external dependency). -->
+        <dependency>
+            <groupId>be.gate25</groupId>
+            <artifactId>transaction-token-starter</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <!-- Test -->
