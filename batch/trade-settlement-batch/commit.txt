@@ -1,0 +1,1 @@
+chore: add trade-settlement-batch (Spring Batch 5, Java 21, two-layer tests)

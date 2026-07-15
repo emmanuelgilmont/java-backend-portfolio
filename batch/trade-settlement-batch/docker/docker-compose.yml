@@ -1,0 +1,45 @@
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: batchdb
+      POSTGRES_USER: batch
+      POSTGRES_PASSWORD: batch
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U batch -d batchdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  trade-settlement-batch:
+    image: trade-settlement-batch:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/batchdb
+      SPRING_DATASOURCE_USERNAME: batch
+      SPRING_DATASOURCE_PASSWORD: batch
+      # Job parameters — override at runtime with: docker compose run trade-settlement-batch ...
+      INPUT_FILE: /data/input/trades_20260521.csv
+      RUN_DATE: "2026-05-21"
+      OUTPUT_DIR: /data/output
+    volumes:
+      # Mount the input/output directories from the host
+      # JAR is pushed here via SCP from the dev machine before docker compose up
+      - ./input:/data/input
+      - ./output:/data/output
+    # Override ENTRYPOINT to pass job parameters
+    command: >
+      --spring.batch.job.name=settlementJob
+      inputFile=/data/input/trades_20260521.csv
+      runDate=2026-05-21
+      outputDir=/data/output
+
+volumes:
+  pgdata:

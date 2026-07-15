@@ -54,6 +54,12 @@ Clean, production-minded backend code built around things I actually know:
 |------------------------------------------------------------------|---|
 | [kafka-financial-pipeline](./kafka/kafka-financial-pipeline) | 🚧 In progress — trade event pipeline with DLQ and Testcontainers (Spring Boot 3, Kafka) |
 
+### Batch
+
+| Project | Description |
+|---|---|
+| [trade-settlement-batch](./batch/trade-settlement-batch) | EOD trade settlement batch — `FlatFileItemReader`, `CompositeItemWriter` (DB + CSV), T+2 calculation, two-layer testing strategy (H2 / Testcontainers PostgreSQL) |
+
 ### gRPC
 
 |      Project                                         | Description |
@@ -69,16 +75,17 @@ Clean, production-minded backend code built around things I actually know:
 
 ## Tech stack
 
-| Layer | Tech                                                 |
-|---|-------------------------------------------------------|
-| Language | Java 8 → 21                                       |
-| Framework | Spring Boot 2 / 3, Quarkus 3                     |
-| Build | Maven                                                |
-| Data | PostgreSQL, Oracle, Elasticsearch                     |
-| Messaging | Kafka, gRPC                                      |
-| Tooling | Docker, Jenkins, SonarQube, Nexus / Artifactory    |
-| Testing | JUnit, Mockito, Testcontainers                     |
-| Cache   | Redis, Caffeine                                    |
+| Layer | Tech                                            |
+|---|-------------------------------------------------|
+| Language | Java 8 → 21                                     |
+| Framework | Spring Boot 2 / 3, Quarkus 3                    |
+| Build | Maven                                           |
+| Data | PostgreSQL, Oracle, Elasticsearch               |
+| Messaging | Kafka, gRPC                                     |
+| Tooling | Docker, Jenkins, SonarQube, Nexus / Artifactory |
+| Testing | JUnit, Mockito, Testcontainers                  |
+| Cache   | Redis, Caffeine                                 |
+| Batch   | Spring Batch 5                                  |
 
 ---
 
