@@ -100,7 +100,8 @@ grpc-price-service/
 │   │   └── resources/
 │   │       └── application.properties
 │   └── test/java/be/gate25/grpc/
-│       └── PriceServiceIntegrationTest.java  # In-process server, JUnit 5
+│       ├── PriceServiceIntegrationTest.java  # In-process server, JUnit 5 — gRPC layer only
+│       └── PriceServiceMdcPropagationIT.java # @SpringBootTest — verifies MDC propagation across the Tomcat/Netty boundary
 ├── pom.xml
 └── README.md
 ```
@@ -125,6 +126,23 @@ docker build -f docker/Dockerfile .
 
 ---
 
+## Tests
+
+Two complementary layers — same principle as the rest of the portfolio: fast, isolated
+tests for the gRPC contract itself, plus a full-context test for anything that depends
+on Spring Boot auto-configuration.
+
+| Test | What it covers |
+|---|---|
+| `PriceServiceIntegrationTest` | In-process gRPC server (`InProcessServerBuilder`), no Spring context. Fast. Verifies `PriceServiceImpl` business logic and the `NOT_FOUND` error path. |
+| `PriceServiceMdcPropagationIT` | Full `@SpringBootTest` on a random port. The interceptors (`MdcClientInterceptor`, `MdcServerInterceptor`) are only registered via Spring Boot auto-configuration, so this is the only test that exercises them — it confirms the transaction token set on the Tomcat thread is still present in MDC when `PriceServiceImpl` runs on the Netty thread. |
+
+```bash
+mvn test
+```
+
+---
+
 ## Status
 
 - [x] Architecture README
@@ -138,6 +156,7 @@ docker build -f docker/Dockerfile .
 - [x] Dockerfile
 - [x] REST → gRPC bridge (`PriceController`)
 - [x] Interceptors MDC — `MdcClientInterceptor` + `MdcServerInterceptor`
+- [x] Integration test — MDC propagation verified end-to-end across the Tomcat → Netty boundary (`PriceServiceMdcPropagationIT`)
 - [ ] Server streaming (optionnel)
 - [ ] Client stub mocké dans les tests (optionnel)
 
