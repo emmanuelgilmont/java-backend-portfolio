@@ -199,13 +199,12 @@ What this layer adds on top of Caffeine:
 > They are incompatible with Java 17+ on most modern platforms (Linux ARM, macOS Apple Silicon…).
 > Testcontainers with the official image is the idiomatic choice for Spring Boot 3 / Java 21.
 
-> **Known gap:** neither layer currently asserts on the *content* of what lands in Redis after
-> a cache write — both layers check cache-aside *behaviour* (was the provider called or not),
-> not that the write round-trips correctly. A real serialization bug in `CacheConfig` (missing
-> `JavaTimeModule`, see "What this dashboard actually caught" below) passed both test layers
-> undetected, because neither one deserializes and asserts on the value actually read back
-> from Redis. Worth adding to Layer 2 as a follow-up: fetch the raw key via `RedisTemplate`
-> after a cache miss and assert it deserializes back into an equal `FxRate`.
+> **Update:** Layer 2 now includes `cachedValue_shouldSurviveSerializationRoundTrip`, which
+> asserts that a value read back from Redis after a cache write matches the original `FxRate`
+> field by field. This closes the gap that let the original `JavaTimeModule` serialization bug
+> (see "What this dashboard actually caught" below) pass both test layers undetected — that
+> bug would have failed this test immediately, since the write never reached Redis in a
+> readable form.
 
 ---
 
