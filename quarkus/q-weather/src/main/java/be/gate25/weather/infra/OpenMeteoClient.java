@@ -62,10 +62,9 @@ public class OpenMeteoClient {
         throw new NoSuchElementException("Place introuvable: " + place);
     }
 
-    // @CacheResult(cacheName = "geocoding")
+    @CacheResult(cacheName = "geocoding")
     public Optional<ResolvedPlace> geocode(String query) {
         JsonNode root = geoClient.search(query, 10, props.language(), "json", props.countryCode());
-        log.info("geocode response for '{}': {}", query, root.textValue());
 
         if (root == null || root.get("results") == null || !root.get("results").isArray())
             return Optional.empty();
@@ -94,7 +93,6 @@ public class OpenMeteoClient {
         return Optional.of(toResolved(best, postcodeWanted));
     }
 
-    // @Cacheable(cacheNames = CacheConfig.CACHE_FORECAST, key = "#lat + '|' + #lon + '|' + #days")
     @CacheResult(cacheName = "forecast")
     public WeatherResponse fetchForecast(String name, String postcode, String countryCode, double lat, double lon, int days) {
         String queryCurrent = String
