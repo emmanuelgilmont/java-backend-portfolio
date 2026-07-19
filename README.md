@@ -16,6 +16,7 @@ Clean, production-minded backend code built around things I actually know:
 - REST API design and implementation
 - Spring Boot services (2 and 3)
 - Microservices patterns
+- API Gateway & service discovery (Spring Cloud Gateway, Eureka)
 - Kafka messaging
 - Elasticsearch integration
 - External API consumption
@@ -76,22 +77,56 @@ Clean, production-minded backend code built around things I actually know:
 | Project                                           | Description                                                                                                                                            |
 |---------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [gmail-automation](./automation/gmail-automation) | Twice-daily Gmail triage — Claude Haiku classifies job opportunities, deduplicates against 7-day history, logs to Google Sheets, notifies via Telegram |
+
+---
+
+### Gateway
+
+| Project                                    | Description                                                                                                                       |
+|---------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| [eureka-server](./gateway/eureka-server)     | Netflix Eureka service registry — standalone, self-preservation disabled                                                          |
+| [gateway-service](./gateway/gateway-service) | 🚧 In progress — Spring Cloud Gateway (WebFlux) routing to fx-rate-service, grpc-price-service and weather-service; static routes today, service-discovery routes planned |
+
 ---
 
 ## Tech stack
 
 | Layer      | Tech                                            |
 |------------|-------------------------------------------------|
-| Language   | Java 8 → 21                                     |
+| Language   | Java 8 → 25                                     |
 | Framework  | Spring Boot 2 / 3, Quarkus 3                    |
+| Framework  | Spring Boot 4.1 (gateway module — first Boot 4 / Java 25 in the repo) |
 | Build      | Maven                                           |
 | Data       | PostgreSQL, Oracle, Elasticsearch               |
 | Messaging  | Kafka, gRPC                                     |
+| Discovery / Gateway | Spring Cloud Gateway, Netflix Eureka   |
 | Tooling    | Docker, Jenkins, SonarQube, Nexus / Artifactory |
 | Testing    | JUnit, Mockito, Testcontainers                  |
 | Cache      | Redis, Caffeine                                 |
 | Monitoring | Prometheus, Grafana                             |
 | Batch      | Spring Batch 5                                  |
+
+---
+
+## Version strategy
+
+This isn't a fleet of production services that all need to stay on the latest patch —
+it's a portfolio, and each project is a snapshot of what I was building with at the time.
+A project written against a given Java / Spring Boot version a year ago stays there
+deliberately; it documents what I used then, not a maintenance backlog. The version
+spread below happened organically, not as a curated demonstration.
+
+| Project | Java | Spring Boot | Notes |
+|---|---|---|---|
+| `weather-service`                | 21 | 4.0.2 | Pinned at time of writing |
+| `fx-rate-service`                | 21 | 3.3.5 | Pinned at time of writing |
+| `grpc-price-service`             | 21 | 3.2.5 | Pinned at time of writing |
+| `q-weather`                      | 21 | Quarkus 3 | Pinned at time of writing |
+| `elasticsearch-formation-search` | 21 | 3.5.13 | Pinned at time of writing |
+| `trade-settlement-batch`         | 21 | 3.3.5 (Spring Batch 5) | Pinned at time of writing |
+| `kafka-financial-pipeline`       | à confirmer | à confirmer | Pinned at time of writing |
+| `transaction-token-starter`      | 17 | 3.4.3 | Pinned at time of writing |
+| `discord-service`                | 21 | 3.5.12 | Pinned at time of writing |
 
 ---
 
